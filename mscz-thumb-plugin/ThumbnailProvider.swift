@@ -88,7 +88,7 @@ class ThumbnailProvider: QLThumbnailProvider {
             print("Failed to create CGImageSource.")
             return
         }
-        
+
         // Create a CGImage from the source
         guard let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
             print("Failed to create CGImage.")
@@ -96,7 +96,21 @@ class ThumbnailProvider: QLThumbnailProvider {
         }
         
         // Draw the CGImage into the provided context
-        let rect = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
-        context.draw(cgImage, in: rect)
+        let imageAspect = CGFloat(cgImage.width) / CGFloat(cgImage.height)
+        let contextAspect = CGFloat(context.width) / CGFloat(context.height)
+
+        var drawRect = CGRect.zero
+
+        if imageAspect > contextAspect {
+            // Image is wider relative to the context
+            let scaledHeight = CGFloat(context.width) / imageAspect
+            drawRect = CGRect(x: 0, y: (CGFloat(context.height) - scaledHeight) / 2, width: CGFloat(context.width), height: scaledHeight)
+        } else {
+            // Image is taller relative to the context
+            let scaledWidth = CGFloat(context.height) * imageAspect
+            drawRect = CGRect(x: (CGFloat(context.width) - scaledWidth) / 2, y: 0, width: scaledWidth, height: CGFloat(context.height))
+        }
+
+        context.draw(cgImage, in: drawRect)
     }
 }
