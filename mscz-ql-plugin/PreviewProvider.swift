@@ -37,8 +37,6 @@ class PreviewProvider: QLPreviewProvider, QLPreviewingController {
         //You can create a QLPreviewReply in several ways, depending on the format of the data you want to return.
         //To return Data of a supported content type:
         
-        let contentType = UTType.plainText // replace with your data type
-        
         if let pdf = readFileFromZip(at: request.fileURL, fileName: "Thumbnails/score.pdf") {
             print("found \(pdf.count) byte pdf")
             let reply = QLPreviewReply.init(forPDFWithPageSize: CGSize.init(width: 800, height: 800)) { (reply: QLPreviewReply) in
